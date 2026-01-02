@@ -1,0 +1,125 @@
+spring:
+  application:
+    name: studyflow
+  profiles:
+    active: default
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+server:
+  port: 9093
+
+management:
+  endpoints.web.exposure.include: health
+
+vizend:
+  test-profiles: default,k8s-test
+  prologue:
+    enabled: false
+    janitor:
+      mode: nats
+      bootstrap-address: 127.0.0.1:4222
+      id: io.vizend.${spring.application.name}
+      subscriptions: >
+        io.vizend.${spring.application.name}
+
+logging:
+  level:
+    io.vizend: debug
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%5p) [${spring.application.name:-},%X{traceId:-},%X{spanId:-}] [${PID:- }] [%15.15t] %clr(%-60.60logger{59}){cyan} : %m%n%wEx'
+
+---
+spring:
+  config:
+    activate:
+      on-profile: default
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://127.0.0.1:3306/${spring.application.name}
+    username: ${spring.application.name}
+    password: ${spring.application.name}
+  jpa:
+    hibernate.ddl-auto: create
+    generate-ddl: true
+
+vizend:
+  prologue:
+    enabled: false
+    internal-auth:
+      password: narasecret-internal
+      rest.base-url: http://localhost:9002
+    dock:
+      #      enabled: false
+      enabled: true
+      rest.base-url: http://localhost:9001
+    xray:
+      enabled: false
+      stamp-method: rest
+      rest:
+        base-url: http://localhost:9094
+      event:
+        servers: 0.0.0.0:4222
+        subject: io.vizend.xray-server
+    data.mongodb.transaction.enabled: false
+    janitor:
+      mode: local
+      servers: localhost:9092
+      id: io.vizend.${spring.application.name}
+      subscriptions:
+        - io.vizend.metro
+        - io.vizend.synchronizer
+  checkpoint:
+    client:
+      rest:
+        base-url: http://localhost:9002
+        request-timeout-seconds: 600
+  ##        loopback: true
+  pigeon:
+    client:
+      rest:
+        base-url: http://localhost:9093
+        request-timeout-seconds: 600
+
+logging:
+  level:
+    io.vizend.janitor: info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: k8s
+  datasource:
+    driver-class-name: ${datasource.driver-class-name}
+    url: ${datasource.url}
+    username: ${datasource.username}
+    password: ${datasource.password}
+  jpa:
+    hibernate:
+      ddl-auto: ${hibernate.ddl-auto}
+    properties:
+      hibernate:
+        show_sql: ${hibernate.show_sql}
+        use_sql_comments: ${hibernate.use_sql_comments}
+        format_sql: ${hibernate.format_sql}
+        enable_lazy_load_no_trans: ${hibernate.enable_lazy_load_no_trans}
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    config-url: /api/${spring.application.name}/v3/api-docs/swagger-config
+    url: /api/${spring.application.name}/v3/api-docs
+
+vizend:
+  prologue:
+    enabled: false
+    janitor:
+      mode: ${janitor.mode}
+
+logging:
+  level:
+    root: ${log.level.root}

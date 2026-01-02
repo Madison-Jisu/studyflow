@@ -1,0 +1,5 @@
+dependencies {
+    api project(':studyflow-domain')
+    api project(':studyflow-feature')
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+}

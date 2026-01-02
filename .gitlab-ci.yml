@@ -1,0 +1,11 @@
+include:
+  - remote: 'https://gitlab.naraway.io/nara-way-public/devops/gitlab-ci/-/raw/main/scripts/naraway-backend-ci.yml'
+
+variables:
+  DEV_BRANCH: 'main'
+  PRD_BRANCH: 'release'
+  SKIP_TEST: 'false'
+  SKIP_SONARQUBE: 'false'
+  BUILD_TYPE: 'deploy'
+  GITOPS_ENABLED: 'false'
+  BASE_VERSION: '4.0.0'

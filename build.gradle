@@ -1,0 +1,130 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'name.remal.sonarlint' version '4.1.0'
+    id 'org.sonarqube' version '3.3'
+}
+
+ext {
+    serviceName = 'studyflow'
+    serviceVersion = '7.0.0-SNAPSHOT'
+    
+    accentVersion = '7.0.54'
+    prologueVersion = '7.0.68'
+    lombokVersion = '1.18.32'
+    springVersion = '6.1.6'
+    springBootVersion = '3.2.5'
+    springSecurityOauth2Version = '2.5.2.RELEASE'
+    springSecurityJwtVersion = '1.1.1.RELEASE'
+    mariaDbVersion = '2.7.4'
+}
+
+sonarqube {
+    def bootProject = project(":${serviceName}-boot")
+    properties {
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${bootProject.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
+}
+
+allprojects {
+    group 'io.vizend'
+    version serviceVersion
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+def useMavenLocalFirst = false
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+    apply plugin: 'io.spring.dependency-management'
+    
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    
+    repositories {
+        if (useMavenLocalFirst) {
+            mavenLocal()
+        }
+        maven {
+            credentials {
+                username System.getenv('NEXUS_ID') ?: nexususer
+                password System.getenv('NEXUS_PASSWORD') ?: nexuspassword
+            }
+            url "${nexusBaseUrl}/${nexusPublicRepository}"
+            allowInsecureProtocol = true
+        }
+        if (!useMavenLocalFirst) {
+            mavenLocal()
+        }
+        mavenCentral()
+    }
+    
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username System.getenv('NEXUS_ID') ?: nexususer
+                    password System.getenv('NEXUS_PASSWORD') ?: nexuspassword
+                }
+                def releasesRepoUrl = "${nexusBaseUrl}/${nexusReleaseRepository}"
+                def snapshotsRepoUrl = "${nexusBaseUrl}/${nexusSnapshotRepository}"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                allowInsecureProtocol true
+                println "url: ${url}"
+            }
+        }
+    }
+    
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+    }
+    
+    dependencies {
+        compileOnly("org.projectlombok:lombok:${lombokVersion}")
+        annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+        testImplementation("org.projectlombok:lombok:${lombokVersion}")
+        testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    }
+    
+    sonarLint {
+        ignoreFailures false
+        ignoredPaths.addAll(
+            '**/aggregate/**/*',
+            '**/facade/**/projection/**/*',
+            '**/test/java/**/*',
+        )
+        rules {
+            disable(
+                'java:S1134',
+                'java:S1135',
+                'java:S125',
+                'java:S1301',
+                'java:S115',
+                'java:S1192',
+                'java:S3740',
+                'java:S1700',
+                'java:S106',
+                'java:S115',
+                'java:S6804',
+                'java:S6813',
+                'java:S6857',
+            )
+        }
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+}
+
+task printServiceName() {
+    doLast {
+        println "serviceName: ${serviceName}"
+    }
+}

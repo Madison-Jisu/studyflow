@@ -1,0 +1,17 @@
+#Tue Dec 30 12:05:21 MST 2025
+createEmbed=false
+createMashup=false
+dbHost=localhost
+dbName=
+dbPassword=
+dbPort=9999
+dbUsername=
+frontProjectPath=
+groupId=io.vizend
+modulePrefix=
+projectBuild=Gradle
+projectStyle=DramaBackend
+projectTemplate=CQRS
+publicModule=false
+skipEvent=false
+storeType=MariaDB

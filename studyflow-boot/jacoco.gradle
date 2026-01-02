@@ -1,0 +1,35 @@
+jacoco {
+    toolVersion '0.8.11'
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    rootProject.subprojects.forEach {
+        println it.name
+        def subProject = it
+        sourceDirectories.from(files(subProject.sourceSets.main.allSource.srcDirs))
+        classDirectories.from(files(subProject.sourceSets.main.output))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+            excludes = []
+        }
+    }
+}

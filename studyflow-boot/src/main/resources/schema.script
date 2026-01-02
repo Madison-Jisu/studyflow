@@ -1,0 +1,9 @@
+## DB 스키마 생성
+
+use mysql;
+CREATE DATABASE studyflow CHARACTER SET utf8 COLLATE utf8_general_ci;
+Create user 'studyflow'@'%' identified by 'studyflow';
+Create user 'studyflow'@'localhost' identified by 'studyflow';
+Grant all privileges on studyflow.* to studyflow@'%';
+Grant all privileges on studyflow.* to studyflow@'localhost';
+Flush privileges;

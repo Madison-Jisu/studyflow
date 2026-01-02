@@ -1,0 +1,4 @@
+dependencies {
+    api("io.vizend:prologue:${prologueVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:${springBootVersion}")
+}

@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        maven {
+            credentials {
+                username System.getenv('NEXUS_ID') ?: nexususer
+                password System.getenv('NEXUS_PASSWORD') ?: nexuspassword
+            }
+            url "${nexusBaseUrl}/${nexusPublicRepository}"
+            allowInsecureProtocol true
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'studyflow'
+include 'studyflow-domain'
+include 'studyflow-feature'
+include 'studyflow-event'
+include 'studyflow-facade'
+include 'studyflow-boot'
+include 'studyflow-client'
+include 'studyflow-store-jpa'
