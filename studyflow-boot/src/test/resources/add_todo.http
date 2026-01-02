@@ -1,0 +1,6 @@
+POST http://localhost:9093//feature/adm/todolist/cm/register-to-do-list/command
+Content-Type: application/json
+
+{
+  "userId": "9"
+}

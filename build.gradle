@@ -8,8 +8,8 @@ ext {
     serviceName = 'studyflow'
     serviceVersion = '7.0.0-SNAPSHOT'
     
-    accentVersion = '7.0.54'
-    prologueVersion = '7.0.68'
+    accentVersion = '7.0.66'
+    prologueVersion = '7.0.76'
     lombokVersion = '1.18.32'
     springVersion = '6.1.6'
     springBootVersion = '3.2.5'

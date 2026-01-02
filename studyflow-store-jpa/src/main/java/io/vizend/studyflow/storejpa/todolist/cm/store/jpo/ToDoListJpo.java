@@ -5,6 +5,7 @@
 */
 package io.vizend.studyflow.storejpa.todolist.cm.store.jpo;
 
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;

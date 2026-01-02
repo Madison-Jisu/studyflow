@@ -41,18 +41,21 @@ spring:
     username: ${spring.application.name}
     password: ${spring.application.name}
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     generate-ddl: true
 
 vizend:
+
   prologue:
     enabled: false
     internal-auth:
-      password: narasecret-internal
+      enabled: false
+      username: ${spring.application.name}
+      password: vizendsecret-internal
       rest.base-url: http://localhost:9002
     dock:
       #      enabled: false
-      enabled: true
+      enabled: false
       rest.base-url: http://localhost:9001
     xray:
       enabled: false
